@@ -124,3 +124,7 @@ The API documentation is also available in ReDoc:
 #### Users
 
 - `user/`: Get a list of users and create a new user.
+
+#### Web
+
+`http://ecovechain.pythonanywhere.com/`
