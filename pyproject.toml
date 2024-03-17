@@ -10,6 +10,10 @@ python = "^3.11"
 django = "^5.0.3"
 thor-devkit = "^1.0.14"
 django-rest-framework = "^0.1.0"
+pillow = "^10.2.0"
+djangorestframework-simplejwt = "^5.3.1"
+django-cors-headers = "^4.3.1"
+django-filter = "^24.1"
 
 
 [build-system]
