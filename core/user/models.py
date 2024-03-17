@@ -5,6 +5,7 @@ from django.contrib.auth.models import (
     PermissionsMixin
 )
 from core.abstract.models import AbstractModel, AbstractManager
+from thor_devkit import cry
 
 
 def user_directory_path(instance, filename):
@@ -12,16 +13,25 @@ def user_directory_path(instance, filename):
     return "user_{0}/{1}".format(instance.public_id, filename)
 
 
+class HDWallet(models.Model):
+    user = models.OneToOneField('User', on_delete=models.CASCADE, related_name='hd_wallet')
+    mnemonic = models.TextField()
+    public_key = models.CharField(max_length=128)
+    private_key = models.CharField(max_length=128)
+    address = models.CharField(max_length=42)
+
+    def __str__(self):
+        return f"HD Wallet for {self.user.email}"
+
+
 class UserManager(BaseUserManager, AbstractManager):
     def create_user(self, username, email, password=None, **kwargs):
-        """Create and return a `User` with an email,
-        phone number, username and password."""
         if username is None:
             raise TypeError("Users must have a username.")
         if email is None:
             raise TypeError("Users must have an email.")
         if password is None:
-            raise TypeError("User must have an email.")
+            raise TypeError("User must have a password.")
 
         user = self.model(
             username=username, email=self.normalize_email(email), **kwargs
@@ -29,12 +39,24 @@ class UserManager(BaseUserManager, AbstractManager):
         user.set_password(password)
         user.save(using=self._db)
 
+        # Generate mnemonic
+        mnemonic = cry.mnemonic.generate()
+
+        # Create HD wallet for the user
+        hd_node = cry.HDNode.from_mnemonic(
+            mnemonic,
+            init_path=cry.hdnode.VET_EXTERNAL_PATH)
+        hd_wallet = HDWallet.objects.create(
+            user=user,
+            mnemonic=mnemonic,
+            public_key=hd_node.public_key().hex(),
+            private_key=hd_node.private_key().hex(),
+            address=hd_node.address().hex()
+        )
+
         return user
 
     def create_superuser(self, username, email, password, **kwargs):
-        """
-        Create and return a `User` with superuser (admin) permissions.
-        """
         if password is None:
             raise TypeError("Superusers must have a password.")
         if email is None:
