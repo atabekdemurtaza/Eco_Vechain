@@ -4,11 +4,14 @@ from django.conf import settings
 from rest_framework import serializers
 
 
+class HDWalletSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HDWallet
+        fields = ['mnemonic', 'public_key', 'private_key', 'address']
+
+
 class UserSerializer(AbstractSerializer):
-    mnemonic = serializers.CharField(source='hd_wallet.mnemonic', read_only=True)
-    public_key = serializers.CharField(source='hd_wallet.public_key', read_only=True)
-    private_key = serializers.CharField(source='hd_wallet.private_key', read_only=True)
-    address = serializers.CharField(source='hd_wallet.address', read_only=True)
+    hd_wallet = HDWalletSerializer(read_only=True)
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -36,9 +39,13 @@ class UserSerializer(AbstractSerializer):
             "is_active",
             "created",
             "updated",
-            "mnemonic",  # Добавляем поля кошелька пользователя
-            "public_key",
-            "private_key",
-            "address"
+            "hd_wallet",  # Include HDWallet fields as nested serializer
+            "location",  # Include location field
+            "wallet_price",  # Include wallet_price field
         ]
         read_only_fields = ['is_active']
+
+    def update(self, instance, validated_data):
+        instance = super().update(instance, validated_data)
+        instance.increment_total_activities()  # Call the increment_total_activities method
+        return instance

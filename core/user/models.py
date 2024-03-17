@@ -14,7 +14,10 @@ def user_directory_path(instance, filename):
 
 
 class HDWallet(models.Model):
-    user = models.OneToOneField('User', on_delete=models.CASCADE, related_name='hd_wallet')
+    user = models.OneToOneField(
+        'User',
+        on_delete=models.CASCADE,
+        related_name='hd_wallet')
     mnemonic = models.TextField()
     public_key = models.CharField(max_length=128)
     private_key = models.CharField(max_length=128)
@@ -87,6 +90,15 @@ class User(AbstractModel, AbstractBaseUser, PermissionsMixin):
         blank=True,
         upload_to=user_directory_path
     )
+    total_activities = models.PositiveBigIntegerField(
+        default=0,
+    )
+    wallet_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True)
+    location = models.CharField(max_length=100, null=True, blank=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
@@ -99,3 +111,7 @@ class User(AbstractModel, AbstractBaseUser, PermissionsMixin):
     @property
     def name(self):
         return f'{self.first_name} {self.last_name}'
+
+    def increment_total_activities(self):
+        self.total_activities += 1
+        self.save(update_fields=['total_activities'])
