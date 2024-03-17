@@ -41,10 +41,12 @@ pycparser==2.21
 pycryptodome==3.20.0
 Pygments==2.17.2
 PyJWT==2.8.0
+pypng==0.20220715.0
 pytest==8.1.1
 pytest-cov==4.1.0
 pytz==2024.1
 PyYAML==6.0.1
+qrcode==7.4.2
 readme_renderer==43.0
 requests==2.31.0
 requests-toolbelt==1.0.0
@@ -58,6 +60,7 @@ sqlparse==0.4.4
 thor-devkit==1.0.14
 toolz==0.12.1
 twine==5.0.0
+typing_extensions==4.10.0
 uritemplate==4.1.1
 urllib3==2.2.1
 voluptuous==0.12.0
