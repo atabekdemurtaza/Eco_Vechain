@@ -128,3 +128,9 @@ The API documentation is also available in ReDoc:
 #### Web
 
 `http://ecovechain.pythonanywhere.com/`
+
+![Alt Text](screenshots/1.png)
+
+![Alt Text](screenshots/2.png)
+
+![Alt Text](screenshots/3.png)

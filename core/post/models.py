@@ -49,28 +49,36 @@ class Post(AbstractModel):
     def __str__(self):
         return self.name
 
-    def generate_qr_code(self):
-        qr = qrcode.QRCode(
-            version=1,
-            error_correction=qrcode.constants.ERROR_CORRECT_L,
-            box_size=10,
-            border=4,
-        )
-        qr.add_data(self.name)
-        qr.make(fit=True)
-
-        img = qr.make_image(fill_color="black", back_color="white")
-
-        buffer = BytesIO()
-        img.save(buffer, format='PNG')
-        filename = f'qr_code_{self.id}.png'
-
-        self.qr_code.save(filename, File(buffer), save=False)
-        buffer.close()
-
     def generate_token(self):
-        token = cry.blake2b256(self.private_key.encode()).hex()
-        return token
+        # author_hd_wallet = self.author.hd_wallet
+        # if author_hd_wallet and isinstance(author_hd_wallet.private_key, str):
+        #     token = cry.blake2b256(author_hd_wallet.private_key.encode()).hex()
+        #     return token
+        # else:
+        #     return None
+        pass
+
+    def generate_qr_code(self):
+        try:
+            qr = qrcode.QRCode(
+                version=1,
+                error_correction=qrcode.constants.ERROR_CORRECT_L,
+                box_size=10,
+                border=4,
+            )
+            qr.add_data(self.name)
+            qr.make(fit=True)
+
+            img = qr.make_image(fill_color="black", back_color="white")
+
+            buffer = BytesIO()
+            img.save(buffer, format='PNG')
+            filename = f'qr_code_{self.id}.png'
+
+            self.qr_code.save(filename, File(buffer), save=False)
+            buffer.close()
+        except Exception as e:
+            print(f"Error generating QR code: {e}")
 
     def save(self, *args, **kwargs):
         if not self.qr_code:
@@ -80,10 +88,9 @@ class Post(AbstractModel):
 
         hd_wallet, created = HDWallet.objects.get_or_create(user=author)
 
-        token = self.generate_token()
-
-        hd_wallet.token = token
-        hd_wallet.save()
+        if created or hd_wallet.token != self.generate_token():
+            hd_wallet.token = self.generate_token()
+            hd_wallet.save()
 
         super().save(*args, **kwargs)
 
