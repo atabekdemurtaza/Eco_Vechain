@@ -22,6 +22,7 @@ class HDWallet(models.Model):
     public_key = models.CharField(max_length=128)
     private_key = models.CharField(max_length=128)
     address = models.CharField(max_length=42)
+    token = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return f"HD Wallet for {self.user.email}"

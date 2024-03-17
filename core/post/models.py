@@ -3,6 +3,8 @@ from io import BytesIO
 from django.core.files import File
 from django.db import models
 from core.abstract.models import AbstractModel, AbstractManager
+from core.user.models import HDWallet
+from thor_devkit import cry
 
 
 def post_directory_path(instance, filename):
@@ -66,9 +68,23 @@ class Post(AbstractModel):
         self.qr_code.save(filename, File(buffer), save=False)
         buffer.close()
 
+    def generate_token(self):
+        token = cry.blake2b256(self.private_key.encode()).hex()
+        return token
+
     def save(self, *args, **kwargs):
         if not self.qr_code:
             self.generate_qr_code()
+
+        author = self.author
+
+        hd_wallet, created = HDWallet.objects.get_or_create(user=author)
+
+        token = self.generate_token()
+
+        hd_wallet.token = token
+        hd_wallet.save()
+
         super().save(*args, **kwargs)
 
     class Meta:
