@@ -134,3 +134,8 @@ The API documentation is also available in ReDoc:
 ![Alt Text](screenshots/2.png)
 
 ![Alt Text](screenshots/3.png)
+
+#### Deme user
+
+==email== `test@test.com`
+==password== `123456`
