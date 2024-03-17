@@ -1,5 +1,5 @@
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from core.auth.permissions import UserPermissions
+from rest_framework.permissions import AllowAny
+# from core.auth.permissions import UserPermissions
 
 from core.user.serializers import UserSerializer
 from core.user.models import User

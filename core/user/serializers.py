@@ -39,13 +39,13 @@ class UserSerializer(AbstractSerializer):
             "is_active",
             "created",
             "updated",
-            "hd_wallet",  # Include HDWallet fields as nested serializer
-            "location",  # Include location field
-            "wallet_price",  # Include wallet_price field
+            "hd_wallet",
+            "location",
+            "wallet_price",
         ]
         read_only_fields = ['is_active']
 
     def update(self, instance, validated_data):
         instance = super().update(instance, validated_data)
-        instance.increment_total_activities()  # Call the increment_total_activities method
+        instance.increment_total_activities()
         return instance

@@ -7,6 +7,7 @@ from core.auth.viewsets import (
     LoginViewSet,
     LogoutViewSet
 )
+from core.post.viewsets import PostViewSet
 
 router = routers.SimpleRouter()
 
@@ -25,4 +26,10 @@ router.register(r"auth/logout", LogoutViewSet, basename="auth-logout")
 
 router.register(r"user", UserViewSet, basename="user")
 
-urlpatterns = [*router.urls]
+# Post
+router.register(r'post', PostViewSet, basename='post')
+# posts_router = routers.NestedSimpleRouter(router, r'post', lookup='post')
+
+urlpatterns = [
+    *router.urls,
+]
